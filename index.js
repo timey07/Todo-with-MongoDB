@@ -77,11 +77,13 @@ app.post("/todo", auth, async (req, res) => {
     const userId = req.userId;
     const title = req.body.title;
     const done = req.body.done;
+    const dueDate= req.body.dueDate;
 
     await TodoModel.create({
         title: title,
         done: done,
-        userId: userId
+        userId: userId,
+        dueDate: dueDate
     });
 
     res.json({

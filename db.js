@@ -12,7 +12,10 @@ const User = new Schema({
 const Todo = new Schema({
     userId: ObjectId,
     title: String,
-    done: Boolean
+    done: Boolean,
+    dueDate: Date
+},{
+    timestamps: true
 });
 
 const UserModel = mongoose.model('users', User);
