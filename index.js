@@ -34,7 +34,7 @@ app.post("/signup", async (req, res) => {
   }
   catch(e){
     res.status(500).json({
-            message: "Error while signing up"            
+            message: "Email already signedup."            
         })
   }
 });
@@ -48,7 +48,7 @@ app.post("/signin", async function(req, res) {
         email: email,
     });
 
-    const pass= bcrypt.compare(password,user.password);
+    const pass= await bcrypt.compare(password,user.password);
 
     if (user && pass) {
         const token = jwt.sign({
