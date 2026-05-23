@@ -48,6 +48,12 @@ app.post("/signin", async function(req, res) {
         email: email,
     });
 
+    if (!user) {
+    return res.status(403).json({
+        message: "Email not found, signup first."
+    });
+}
+
     const pass= await bcrypt.compare(password,user.password);
 
     if (user && pass) {
@@ -62,7 +68,7 @@ app.post("/signin", async function(req, res) {
         })
     } else {
         res.status(403).json({
-            message: "Incorrect creds"
+            message: "Incorrect password"
         })
     }
 });
@@ -94,5 +100,30 @@ app.get("/todos", auth, async (req, res) => {
         todos
     });
 });
+
+app.post("/doTodo",auth,async(req,res)=>{
+    const title=req.body.title;
+    const userId=req.userId;
+    const todo= await TodoModel.findOneAndUpdate({
+        userId: userId,
+        title: title
+    },{
+        done:true
+    },{
+        new:true
+    })
+
+    if (!todo) {
+        return res.status(404).json({
+            message: "Todo not found"
+        });
+    }
+
+    res.json({
+        message: "Todo marked as done",
+        todo
+    });
+
+})
 
 app.listen(3000);
