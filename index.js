@@ -15,6 +15,7 @@ const { UserModel, TodoModel } = require("./db");
 const { auth, JWT_SECRET } = require("./auth");
 
 app.post("/signup", async (req, res) => {
+    try{
     const email = req.body.email;
     const password = req.body.password;
     const name = req.body.name;
@@ -30,6 +31,12 @@ app.post("/signup", async (req, res) => {
     res.json({
         message: "You are signed up"
     })
+  }
+  catch(e){
+    res.status(500).json({
+            message: "Error while signing up"            
+        })
+  }
 });
 
 app.post("/signin", async function(req, res) {
