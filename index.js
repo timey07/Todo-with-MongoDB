@@ -13,8 +13,22 @@ const bcrypt = require("bcrypt");
 
 const { UserModel, TodoModel } = require("./db");
 const { auth, JWT_SECRET } = require("./auth");
+const {
+    signupSchema,
+    signinSchema,
+    todoSchema
+} = require("./schemas");
 
 app.post("/signup", async (req, res) => {
+    const parsedData = signupSchema.safeParse(req.body);
+
+    if (!parsedData.success) {
+        return res.status(400).json({
+            message: "Invalid inputs",
+            errors: parsedData.error.issues
+        });
+    }
+
     try{
     const email = req.body.email;
     const password = req.body.password;
@@ -40,6 +54,15 @@ app.post("/signup", async (req, res) => {
 });
 
 app.post("/signin", async function(req, res) {
+    const parsedData = signinSchema.safeParse(req.body);
+
+    if (!parsedData.success) {
+        return res.status(400).json({
+            message: "Invalid inputs",
+            errors: parsedData.error.issues
+        });
+    }
+
     const email = req.body.email;
     const password = req.body.password;
 
@@ -74,6 +97,15 @@ app.post("/signin", async function(req, res) {
 });
 
 app.post("/todo", auth, async (req, res) => {
+    const parsedData = todoSchema.safeParse(req.body);
+
+    if (!parsedData.success) {
+        return res.status(400).json({
+            message: "Invalid inputs",
+            errors: parsedData.error.issues
+        });
+    }
+
     const userId = req.userId;
     const title = req.body.title;
     const done = req.body.done;
