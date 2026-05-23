@@ -1,23 +1,29 @@
 const express=require('express');
-require("dotenv").config();
 const app=express();
 app.use(express.json());
-const { UserModel, TodoModel } = require("./db");
+
+require("dotenv").config();
+
 const jwt=require('jsonwebtoken');
-const { auth, JWT_SECRET } = require("./auth");
 
 const mongoose = require("mongoose");
 mongoose.connect(process.env.DB_LINK);
 
+const bcrypt = require("bcrypt");
+
+const { UserModel, TodoModel } = require("./db");
+const { auth, JWT_SECRET } = require("./auth");
 
 app.post("/signup", async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     const name = req.body.name;
 
+    const hashedPassword = await bcrypt.hash(password,10);
+
     await UserModel.create({
         email: email,
-        password: password,
+        password: hashedPassword,
         name: name
     });
     
@@ -30,12 +36,14 @@ app.post("/signin", async function(req, res) {
     const email = req.body.email;
     const password = req.body.password;
 
-    const response = await UserModel.findOne({
+
+    const user = await UserModel.findOne({
         email: email,
-        password: password,
     });
 
-    if (response) {
+    const pass= bcrypt.compare(password,user.password);
+
+    if (user && pass) {
         const token = jwt.sign({
             id: response._id.toString()
         },
