@@ -96,7 +96,7 @@ app.get("/todos", auth, async (req, res) => {
 
     const todos = await TodoModel.find({
         userId: userId
-    });
+    }).populate("userId");
 
     res.json({
         todos

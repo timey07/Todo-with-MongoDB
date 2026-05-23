@@ -10,11 +10,15 @@ const User = new Schema({
 });
 
 const Todo = new Schema({
-    userId: ObjectId,
+    userId: {
+        type: ObjectId,
+        ref: "users",
+        required: true
+    },
     title: String,
     done: Boolean,
     dueDate: Date
-},{
+}, {
     timestamps: true
 });
 
